@@ -1,9 +1,10 @@
-# 📊 Gestion des populations – Modèle Lotka–Volterra  
+# 📊 Modelisation des populations (une espèse)
+  
 **Groupe D – Troll | SEP092 – Écosystèmes des données massives**
 
 ---
 
-## 📌 Présentation générale
+## Présentation générale
 
 Ce projet implémente une application **R** simulant l’évolution d’une population (**Troll**) en interaction compétitive avec une autre espèce (**Orc**), selon un **modèle discret de type Lotka–Volterra**.
 
@@ -13,13 +14,13 @@ L’application fournit :
 - une **base de données fichier (CSV)** mise à jour automatiquement toutes les **5 secondes**,
 - un historique exploitable pour le **monitoring**.
 
-Projet réalisé dans le cadre du mini-projet :  
+Projet réalisé dans le cadre du projet :  
 **SEP092 – Écosystèmes des données massives – Sécurisation des procédés**  
 Université de Reims Champagne-Ardenne.
 
 ---
 
-## 🧠 Modèle mathématique
+## Modèle mathématique
 
 La population étudiée est la population **Troll** (groupe D), en interaction avec la population **Orc**.
 
@@ -41,12 +42,12 @@ Pour les tests demandés dans l’énoncé, on peut utiliser :
 N_j(t) = K_j \cos(t)
 \]
 
----
 
-## 🗂️ Structure du projet
 
+##  Structure du projet
+
+```text
 gestion_data_proj/
-│
 ├── R/
 │   ├── utils.R               # Modèle + fonctions de stockage CSV
 │   ├── update_every_5s.R     # Mise à jour automatique toutes les 5 secondes
@@ -55,15 +56,15 @@ gestion_data_proj/
 │       └── run_api.R         # Lancement de l’API
 │
 ├── storage/                  # Base de données fichier (CSV, non versionnée)
-│
 ├── gestion_data_proj.Rproj   # Projet RStudio
 ├── README.md
 └── .gitignore
+```
 
 
----
 
-## ⚙️ Prérequis
+
+##  Prérequis
 
 - **R ≥ 4.2**
 - Packages R nécessaires :
@@ -74,9 +75,28 @@ Installation des dépendances :
 
 ```bash
 Rscript -e 'install.packages(c("plumber","here"), repos="https://cloud.r-project.org")'
+```
+##  Exécution du projet
 
-Exécution du projet
-1️⃣ Création du dossier de stockage
+### 1️ Création du dossier de stockage
+
 ```bash
 mkdir -p storage
+```
+
+### 2️ Lancement de l’API REST
+
+```bash
+Rscript R/srv/run_api.R
+```
+
+### 3️ Lancement de la mise à jour automatique
+
+```bash
+Rscript R/update_every_5s.R
+```
+
+### Simulation d'une population
+```bash
+curl -X POST "http://127.0.0.1:16030/simulate?Ni0=50&Nj0=80&alpha=0.3&T=50"
 ```
