@@ -2,6 +2,32 @@
 library(here)
 source(here::here("R", "utils.R"))
 
+
+# ---- Security (token) ----
+# Utilise une variable d'environnement API_TOKEN
+# Si vide/non definie -> pas de securite (pratique en dev)
+is_authorized <- function(req) {
+  token <- Sys.getenv("API_TOKEN", unset = "")
+  if (token == "") return(TRUE)
+  
+  auth <- req$HTTP_AUTHORIZATION %||% ""
+  # format attendu: "Bearer xxx"
+  grepl(paste0("^Bearer\\s+", token, "$"), auth)
+}
+
+`%||%` <- function(a, b) if (!is.null(a) && nzchar(a)) a else b
+
+#* @filter auth
+function(req, res) {
+  if (!is_authorized(req)) {
+    res$status <- 401
+    return(list(error = "Unauthorized"))
+  }
+  plumber::forward()
+}
+##################################################
+
+
 #* @apiTitle API Population - Troll (Groupe D)
 #* @apiDescription Modele discret avec interaction Troll (i) depend de Orc (j). Stockage CSV dans storage/history.csv
 
@@ -12,7 +38,6 @@ source(here::here("R", "utils.R"))
 #* @param K capacite biotique (defaut 1000)
 #* @param alpha taux de competition (defaut 0.2)
 #* @param T nombre de pas (defaut 100)
-#* @post /simulate
 #* @param mode_Nj "constant" ou "cos"
 #* @param Kj amplitude pour Nj(t)=Kj*cos(t)
 #* @post /simulate
