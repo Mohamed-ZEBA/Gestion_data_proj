@@ -1,6 +1,6 @@
 # R/srv/service_pop.R
-library(here)
-source(here::here("R", "utils.R"))
+source("/app/R/utils.R")
+
 
 
 # ---- Security (token) ----

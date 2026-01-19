@@ -105,20 +105,52 @@ Tester l’accès à l’API :
 curl -H "Authorization: Bearer devtoken" \
      http://127.0.0.1:16030/status
 ```
+Si la variable `API_TOKEN` n’est pas définie, l’API est accessible sans authentification (mode développement).
 
 
-### 3️ Lancement de la mise à jour automatique
+### 3 .Déploiement avec Docker
 
-Lancement du calcul et du stockage toutes les 5 secondes : 
+L’application (API + mise à jour automatique) est conteneurisée à l’aide de Docker.
 
+#### Construction de l’image
 
 ```bash
-Rscript R/update_every_5s.R
+docker build -t sep092-groupe-d .
+``` 
+
+#### Lancement du conteneur
+
+```bash
+docker run -d \
+  --name sep092-groupe-d-app \
+  -p 16030:16030 \
+  -e API_TOKEN=devtoken \
+  -v "$(pwd)/storage:/app/storage" \
+  sep092-groupe-d
+``` 
+
+- L’API REST est accessible sur le port 16030
+
+- Les données sont stockées via un volume Docker
+
+- Le calcul est exécuté automatiquement toutes les 5 secondes 
+
+#### Gestion du conteneur
+
+```bash
+# Arrêter le conteneur Docker
+docker stop sep092-groupe-d-app
+
+# Relancer le conteneur existant
+docker start sep092-groupe-d-app
+
+# Afficher les logs en temps réel (API + calcul automatique)
+docker logs -f sep092-groupe-d-app
 ``` 
 
 ### 4. Monitoring (Shiny)
 
-Lancer l’application de monitoring :
+Le monitoring Shiny est exécuté hors conteneur et lit directement les données stockées : 
 
 ```bash
 Rscript R/monitor/run_monitor.R

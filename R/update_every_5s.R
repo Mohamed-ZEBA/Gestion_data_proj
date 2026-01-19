@@ -1,6 +1,6 @@
 # R/update_every_5s.R
-library(here)
-source(here::here("R", "utils.R"))
+source("/app/R/utils.R")
+
 
 # Parametres fixes (groupe D)
 Ni <- 50      # taille initiale Troll

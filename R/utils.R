@@ -1,5 +1,4 @@
 # R/utils.R
-library(here)
 
 # ===============================
 # Modele discret avec interaction (competition)
@@ -71,7 +70,7 @@ simulate_population_interaction <- function(
 # ===============================
 
 ensure_storage <- function() {
-  dir.create(here::here("storage"), showWarnings = FALSE, recursive = TRUE)
+  dir.create("/app/storage", showWarnings = FALSE, recursive = TRUE)
 }
 
 append_history <- function(df, population = "Troll", competitor = "Orc") {
@@ -84,7 +83,7 @@ append_history <- function(df, population = "Troll", competitor = "Orc") {
     timestamp = as.character(Sys.time())
   )
   
-  file <- here::here("storage", "history.csv")
+  file <- "/app/storage/history.csv"
   
   if (!file.exists(file)) {
     write.csv(out, file, row.names = FALSE)
@@ -97,7 +96,7 @@ append_history <- function(df, population = "Troll", competitor = "Orc") {
 }
 
 read_history <- function() {
-  file <- here::here("storage", "history.csv")
+  file <- "/app/storage/history.csv"
   if (!file.exists(file)) return(data.frame())
   read.csv(file)
 }
