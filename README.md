@@ -85,7 +85,7 @@ Aucune installation locale de R ou de packages n’est requise.
 ##  Exécution du projet
 
 
-### 1. Déploiement avec Docker 
+### 1. Exécution avec Docker 
 
 L’ensemble de l’application (API REST, calcul automatique et monitoring Shiny)
 est déployé dans **un conteneur Docker unique**.
@@ -141,6 +141,21 @@ docker run -d \
   -p 16031:16031 \
   -v "$(pwd -W)/storage:/app/storage" \
   troll-pop
+``` 
+
+---
+## Tests unitaires (exécution locale)
+
+Des tests unitaires sont fournis afin de valider la logique métier du projet
+(modèle de dynamique des populations et fonctions de stockage).
+
+### Lancer les tests
+
+Depuis la racine du projet :
+
+```bash
+Rscript tests/test_utils_simulation.R
+Rscript tests/test_utils_storage.R
 ``` 
 
 ---
