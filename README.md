@@ -109,7 +109,6 @@ docker run -d \
   troll-pop
 ```
 
-- API REST : http://localhost:16030
 
 - Documentation Swagger : http://localhost:16030/__docs__/
 
