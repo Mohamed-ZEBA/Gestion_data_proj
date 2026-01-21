@@ -1,5 +1,8 @@
 # Modélisation des populations 
 
+
+[![R CI](https://github.com/Mohamed-ZEBA/Gestion_data_proj/actions/workflows/ci.yml/badge.svg)](https://github.com/Mohamed-ZEBA/Gestion_data_proj/actions/workflows/ci.yml)
+
 **Groupe D – Troll | SEP092 – Écosystèmes des données massives**
 
 ---
