@@ -89,17 +89,17 @@ mkdir -p storage
 Ce dossier est monté comme volume Docker afin de persister l’historique des simulations.
 
 
-### 2. Déploiement avec Docker
+### 2. Déploiement avec Docker 
 
 L’ensemble de l’application (API REST, calcul automatique et monitoring Shiny)
 est déployé dans **un conteneur Docker unique**.
 
-#### Construction de l’image
+#### Construction de l’image (à effectuer une seule fois ou après modification du code)
 
 ```bash
 docker build -t troll-pop .
 ```
-Lancement du conteneur
+#### Lancement du conteneur
 ```bash
 docker run -d \
   --name troll-pop-app \
@@ -119,18 +119,35 @@ Les données sont mises à jour automatiquement toutes les 5 secondes.
 
 
 
-#### Gestion du conteneur
+### 3. Gestion du conteneur
 
 ```bash
-# Arrêter le conteneur
+# Arrêter l’application
 docker stop troll-pop-app
 
-# Relancer le conteneur
+# Redémarrer le conteneur existant
 docker start troll-pop-app
 
-# Afficher les logs (API, Shiny et calcul automatique)
+# Afficher les logs (API, calcul et Shiny)
 docker logs -f troll-pop-app
 ``` 
+
+### 4. Reconstruction complète (si nécessaire)
+
+En cas de modification du code R ou du Dockerfile :
+
+```bash
+docker stop troll-pop-app
+docker rm troll-pop-app
+docker build -t troll-pop .
+docker run -d \
+  --name troll-pop-app \
+  -p 16030:16030 \
+  -p 16031:16031 \
+  -v "$(pwd)/storage:/app/storage" \
+  troll-pop
+``` 
+
 ---
 ## Monitoring (Shiny)
 
