@@ -69,7 +69,7 @@ gestion_data_proj/
 ├── README.md
 └── .gitignore
 ```
-
+---
 
 
 ## Prérequis
@@ -131,18 +131,18 @@ docker start troll-pop-app
 # Afficher les logs (API, Shiny et calcul automatique)
 docker logs -f troll-pop-app
 ``` 
-
+---
 ## Monitoring (Shiny)
 
 L’application Shiny est exécutée **dans le conteneur Docker**.
 
 Elle est accessible via un navigateur web :
 
-```text
 http://localhost:16031
-```
+
 Le monitoring lit directement les données stockées dans le volume Docker (storage/history.csv).
 
+---
 ## Test de l’API
 
 Simulation ponctuelle via l’API REST :
