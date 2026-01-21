@@ -81,3 +81,13 @@ read_history <- function() {
   if (!file.exists(file)) return(data.frame())
   read.csv(file)
 }
+
+last_state <- function() {
+  file <- "/app/storage/history.csv"
+  if (!file.exists(file)) return(NULL)
+  
+  h <- read.csv(file)
+  if (nrow(h) == 0) return(NULL)
+  
+  h[nrow(h), ]
+}
