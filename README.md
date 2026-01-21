@@ -81,15 +81,8 @@ Aucune installation locale de R ou de packages n’est requise.
 
 ##  Exécution du projet
 
-### 1️ Création du dossier de stockage
 
-```bash
-mkdir -p storage
-```
-Ce dossier est monté comme volume Docker afin de persister l’historique des simulations.
-
-
-### 2. Déploiement avec Docker 
+### 1. Déploiement avec Docker 
 
 L’ensemble de l’application (API REST, calcul automatique et monitoring Shiny)
 est déployé dans **un conteneur Docker unique**.
@@ -118,7 +111,7 @@ Les données sont mises à jour automatiquement toutes les 5 secondes.
 
 
 
-### 3. Gestion du conteneur
+### 2. Gestion du conteneur
 
 ```bash
 # Arrêter l’application
@@ -131,7 +124,7 @@ docker start troll-pop-app
 docker logs -f troll-pop-app
 ``` 
 
-### 4. Reconstruction complète (si nécessaire)
+### 3. Reconstruction complète (si nécessaire)
 
 En cas de modification du code R ou du Dockerfile :
 
