@@ -105,7 +105,7 @@ docker run -d \
   --name troll-pop-app \
   -p 16030:16030 \
   -p 16031:16031 \
-  -v "$(pwd)/storage:/app/storage" \
+  -v "$(pwd -W)/storage:/app/storage" \
   troll-pop
 ```
 
@@ -143,7 +143,7 @@ docker run -d \
   --name troll-pop-app \
   -p 16030:16030 \
   -p 16031:16031 \
-  -v "$(pwd)/storage:/app/storage" \
+  -v "$(pwd -W)/storage:/app/storage" \
   troll-pop
 ``` 
 
