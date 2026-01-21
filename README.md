@@ -14,6 +14,9 @@ L’application fournit :
 - une base de données fichier (CSV) mise à jour automatiquement toutes les 5 secondes,
 - un monitoring graphique de l’évolution de la population.
 
+L’ensemble de l’application (API, calcul automatique et monitoring) est entièrement **conteneurisé avec Docker**, garantissant la reproductibilité de l’environnement d’exécution.
+
+
 Projet réalisé dans le cadre du cours :  
 **SEP092 – Écosystèmes des données massives – Sécurisation des procédés**  
 Université de Reims Champagne-Ardenne.
@@ -55,31 +58,27 @@ gestion_data_proj/
 │   ├── update_every_5s.R     # Mise à jour automatique toutes les 5 secondes
 │   ├── monitor/
 │   │   ├── app.R             # Application Shiny (monitoring)
-│   │   └── run_monitor.R     # Lancement du monitoring
+│   │   └── run_monitor.R     # Lancement du monitoring (dans Docker)
 │   └── srv/
 │       ├── service_pop.R     # API REST (plumber)
 │       └── run_api.R         # Lancement de l’API
 │
-├── storage/                  # Base de données fichier (CSV, non versionnée)
-├── gestion_data_proj.Rproj
+├── storage/                  # Volume Docker (CSV persisté)
+├── Dockerfile                # Image Docker unique (API + Shiny + updater)
+├── start.sh                  # Script de démarrage du conteneur
 ├── README.md
 └── .gitignore
 ```
 
 
 
-##  Prérequis
+## Prérequis
 
-- **R ≥ 4.2**
-- Packages R nécessaires :
-  - `plumber`
-  - `here`
+- **Docker ≥ 20.x**
+- **Docker Desktop** (Windows / macOS / Linux)
 
-Installation des dépendances :
+Aucune installation locale de R ou de packages n’est requise.
 
-```bash
-Rscript -e 'install.packages(c("plumber","here","shiny","ggplot2"), repos="https://cloud.r-project.org")'
-```
 ##  Exécution du projet
 
 ### 1️ Création du dossier de stockage
@@ -87,80 +86,66 @@ Rscript -e 'install.packages(c("plumber","here","shiny","ggplot2"), repos="https
 ```bash
 mkdir -p storage
 ```
-
-### 2. Authentification (token)
-
-L’API est protégée par un token HTTP.
-
-Lancer l’API avec un token :
-
-```bash
-export API_TOKEN=devtoken
-Rscript R/srv/run_api.R 
-``` 
-
-Tester l’accès à l’API :
-
-```bash
-curl -H "Authorization: Bearer devtoken" \
-     http://127.0.0.1:16030/status
-```
-Si la variable `API_TOKEN` n’est pas définie, l’API est accessible sans authentification (mode développement).
+Ce dossier est monté comme volume Docker afin de persister l’historique des simulations.
 
 
-### 3 .Déploiement avec Docker
+### 2. Déploiement avec Docker
 
-L’application (API + mise à jour automatique) est conteneurisée à l’aide de Docker.
+L’ensemble de l’application (API REST, calcul automatique et monitoring Shiny)
+est déployé dans **un conteneur Docker unique**.
 
 #### Construction de l’image
 
 ```bash
-docker build -t sep092-groupe-d .
-``` 
-
-#### Lancement du conteneur
-
+docker build -t troll-pop .
+```
+Lancement du conteneur
 ```bash
 docker run -d \
-  --name sep092-groupe-d-app \
+  --name troll-pop-app \
   -p 16030:16030 \
-  -e API_TOKEN=devtoken \
+  -p 16031:16031 \
   -v "$(pwd)/storage:/app/storage" \
-  sep092-groupe-d
-``` 
+  troll-pop
+```
 
-- L’API REST est accessible sur le port 16030
+- API REST : http://localhost:16030
 
-- Les données sont stockées via un volume Docker
+- Documentation Swagger : http://localhost:16030/__docs__/
 
-- Le calcul est exécuté automatiquement toutes les 5 secondes 
+- Monitoring Shiny : http://localhost:16031
+
+Les données sont mises à jour automatiquement toutes les 5 secondes.
+
+
 
 #### Gestion du conteneur
 
 ```bash
-# Arrêter le conteneur Docker
-docker stop sep092-groupe-d-app
+# Arrêter le conteneur
+docker stop troll-pop-app
 
-# Relancer le conteneur existant
-docker start sep092-groupe-d-app
+# Relancer le conteneur
+docker start troll-pop-app
 
-# Afficher les logs en temps réel (API + calcul automatique)
-docker logs -f sep092-groupe-d-app
+# Afficher les logs (API, Shiny et calcul automatique)
+docker logs -f troll-pop-app
 ``` 
 
-### 4. Monitoring (Shiny)
+## Monitoring (Shiny)
 
-Le monitoring Shiny est exécuté hors conteneur et lit directement les données stockées : 
+L’application Shiny est exécutée **dans le conteneur Docker**.
 
+Elle est accessible via un navigateur web :
+
+```text
+http://localhost:16031
+```
+Le monitoring lit directement les données stockées dans le volume Docker (storage/history.csv).
+
+## Test de l’API
+
+Simulation ponctuelle via l’API REST :
 ```bash
-Rscript R/monitor/run_monitor.R
-``` 
-
-### 5. Test de l’API 
-
-Simulation ponctuelle via l’API : 
-
-```bash
-curl -X POST "http://127.0.0.1:16030/simulate?Ni0=50&Nj0=80&alpha=0.3&T=1" \
-  -H "Authorization: Bearer devtoken"
+curl -X POST "http://localhost:16030/simulate?Ni0=50&Nj0=80&alpha=0.3&T=1"
 ```

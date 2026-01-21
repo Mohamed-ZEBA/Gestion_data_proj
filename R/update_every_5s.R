@@ -1,5 +1,5 @@
 # R/update_every_5s.R
-source("/app/R/utils.R")
+source("R/utils.R")
 
 
 # Parametres fixes (groupe D)

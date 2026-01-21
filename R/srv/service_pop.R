@@ -1,4 +1,8 @@
 # R/srv/service_pop.R
+
+# Lancer l’updater UNE FOIS au démarrage du conteneur
+
+
 source("/app/R/utils.R")
 
 
