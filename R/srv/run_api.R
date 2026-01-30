@@ -2,7 +2,8 @@
 library(plumber)
 
 api <- plumber::plumb("/app/R/srv/service_pop.R")
-api$run(host = "0.0.0.0", port = 16030)
+api$run(host = "127.0.0.1", port = 16030)
+
 
 
 

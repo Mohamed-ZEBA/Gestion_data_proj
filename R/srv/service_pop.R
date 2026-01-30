@@ -11,12 +11,13 @@ source("/app/R/utils.R")
 # Utilise une variable d'environnement API_TOKEN
 # Si vide/non definie -> pas de securite (pratique en dev)
 is_authorized <- function(req) {
-  token <- Sys.getenv("API_TOKEN", unset = "")
-  if (token == "") return(TRUE)
+  token <- Sys.getenv("API_TOKEN", unset = NA)
+  if (is.na(token)) {
+    stop("API_TOKEN must be defined")
+  }
   
   auth <- req$HTTP_AUTHORIZATION %||% ""
-  # format attendu: "Bearer xxx"
-  grepl(paste0("^Bearer\\s+", token, "$"), auth)
+  identical(auth, paste("Bearer", token))
 }
 
 `%||%` <- function(a, b) if (!is.null(a) && nzchar(a)) a else b
